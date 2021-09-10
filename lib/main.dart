@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              'PLease',
+              'Lemme get them commits pls.',
             ),
           ],
         ),
