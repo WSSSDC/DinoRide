@@ -19,19 +19,20 @@ class _WaitingState extends State<Waiting> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Thanks for your order", style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
-              Text("Your " + (this.widget.dinoName ?? "dino") + " is on it's way", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
-              Container(height: 100),
-              Container(
-                width: 500,
-                height: 265,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(100)),
-                  image: DecorationImage(
-                    image: AssetImage('images/loading.gif')
-                  )
-                ),
-              )
+              Text("Your " + (this.widget.dinoName ?? "dino") + " is on its way", style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+              Expanded(
+                child: Center(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(100)),
+                      image: DecorationImage(
+                        image: AssetImage('images/loading.gif')
+                      )
+                    ),
+                  ),
+                )
+              ),
+              Text("Your " + (this.widget.dinoName ?? "dino") + " is on its way", style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: Colors.transparent)),
             ],
           ),
         ),

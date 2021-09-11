@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:location/location.dart';
@@ -15,8 +14,9 @@ double zoomx = 0.004;
 double zoomy = 0.004;
 double currentLon = -122.032;
 double currentLat = 37.3317;
-double expansion = 250000;
+double expansion = 150000;
 LocationData location;
+List<String> imagenames = ['dinolux-50.png', 'dino-50.png', 'dinox-50.png', 'dinocopter-50.png'];
 
 void main() {
   runApp(MyApp());
@@ -46,22 +46,23 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Way> ways = [];
-  ui.Image _image;
+  List<ui.Image> _images = [];
 
   @override
   void initState() {
     DinoController.stream;
-    _loadImage();
+    _loadImage("images/dino-50.png");
+    imagenames.forEach((e) => _loadImage("images/" + e));
     getLocation();
     super.initState();
   }
 
-  _loadImage() async {
-    ByteData bd = await rootBundle.load("images/dino-50.png");
+  _loadImage(String asset) async {
+    ByteData bd = await rootBundle.load(asset);
     final Uint8List bytes = Uint8List.view(bd.buffer);
     final ui.Codec codec = await ui.instantiateImageCodec(bytes);
     final ui.Image image = (await codec.getNextFrame()).image;
-    setState(() => _image = image);
+    setState(() => _images.add(image));
   }
 
   getLocation() async {
@@ -176,23 +177,19 @@ class _MyHomePageState extends State<MyHomePage> {
             }
             return Container(color: Colors.transparent);
           }).toList()) + <Widget>[
-            StreamBuilder(
-              stream: DinoController.stream,
-              builder: (context, currentDinos) {
-                return Container(
-                  width: width,
-                  height: height,
-                  child: CustomPaint(
-                    painter: DinoPainter(currentDinos.data ?? [], _image),
-                  ),
-                );
-              }
-            ),
+            
             Container(
               width: width,
               height: height,
               child: CustomPaint(
                 painter: MapPainter(ways, location),
+              ),
+            ),
+            Container(
+              width: width,
+              height: height,
+              child: CustomPaint(
+                painter: DinoPainter(DinoController.dinos ?? [], _images),
               ),
             ),
             GestureDetector(
@@ -281,7 +278,8 @@ class Way {
             DinoController.dinos.add({
               'currentNode': nodes.first,
               'nodes': nodes,
-              'nextNode': nodes[1] ?? nodes.first
+              'nextNode': nodes[1] ?? nodes.first,
+              'image': rng.nextInt(4)
             });
           }
         }
@@ -361,20 +359,17 @@ class MapPainter extends CustomPainter {
 }
 
 class DinoPainter extends CustomPainter {
-  DinoPainter(this.dinos, this.image);
+  DinoPainter(this.dinos, this.images);
   final List<Map<String, dynamic>> dinos;
-  final ui.Image image;
+  final List<ui.Image> images;
 
   @override
   void paint(Canvas canvas, Size size) {
 
-    var dinoPoints = (dinos ?? []).map((entry){
+    (dinos ?? []).forEach((entry){
       Node node = entry['currentNode'];
-      return Offset((node.longitude - currentLon) * expansion - 25, (node.latitude - currentLat) * expansion - 25);
-    }).toList();
-
-    dinoPoints.forEach((point) {
-      canvas.drawImage(image, point, Paint());
+      var point = Offset((node.longitude - currentLon) * expansion - 25, (node.latitude - currentLat) * expansion - 25);
+      canvas.drawImage(images[entry['image']], point, Paint());
     });
   }
 

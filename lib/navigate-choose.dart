@@ -16,6 +16,20 @@ class _NavigateChooseState extends State<NavigateChoose> {
     setState(() => selectedDino = newDino);
   }
 
+  String get cost{
+    switch (selectedDino) {
+      case 'DinoX':
+        return '5';
+      case 'Dino Green':
+        return '8';
+      case 'Dino Lux':
+        return '15';
+      case 'Dino Copter':
+        return '69';
+    }
+    return '5';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,9 +50,9 @@ class _NavigateChooseState extends State<NavigateChoose> {
                   height: 50,
                   child: GestureDetector(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (_) => Waiting()));
+                      Navigator.push(context, MaterialPageRoute(builder: (_) => Waiting(dinoName: selectedDino)));
                     },
-                    child: Center(child: Text("PAY 15 ROCKS", style: TextStyle(
+                    child: Center(child: Text("PAY " + cost + " ROCKS", style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 23,
                       color: Colors.white
