@@ -14,9 +14,11 @@ double zoomx = 0.004;
 double zoomy = 0.004;
 double currentLon = -122.032;
 double currentLat = 37.3317;
-double expansion = 150000;
+double expansion = 250000;
 LocationData location;
+var rng = new Random();
 List<String> imagenames = ['dinolux-50.png', 'dino-50.png', 'dinox-50.png', 'dinocopter-50.png', 'caveman.png'];
+List<String> rockimagenames = ['rock.png', 'rock2.png', 'rock3.png'];
 
 void main() {
   runApp(MyApp());
@@ -73,9 +75,11 @@ class _MyHomePageState extends State<MyHomePage> {
     currentLat = location.latitude + (-400/expansion);
     print("Getting Map Data...");
     Map<String, dynamic> map = Map<String, dynamic>.from(await OSM.getData(left:location.longitude - zoomx, right:location.longitude + zoomx, bottom:location.latitude - zoomy, top:location.latitude + zoomy));
+    
     print("Map Data Received");
     var waysData = map['elements'].where((e) => e['type']=='way');
     // waysData.toList().forEach((e) => print(e['tags']));
+    ways = [];
     print("Generating Map...");
     ways = List<Way>.from(waysData.map((e) {
       List<Node> nodes = [];
@@ -165,14 +169,13 @@ class _MyHomePageState extends State<MyHomePage> {
             } else if (way.id == 'building') {
               return Container(
                 child: Align(
-                  alignment: FractionalOffset(((way.avg.longitude - currentLon) * expansion) / width, ((way.avg.latitude - currentLat) * expansion) / height),
-                  child: Image.asset('images/rock.png', width: way.size * 10, height: way.size * 10,),
+                  alignment: FractionalOffset(((way.avg.longitude - currentLon) * expansion) / (width - 100) - 0.15, ((way.avg.latitude - currentLat) * expansion) / (height - 100) - 0.08),
+                  child: Image.asset('images/' + way.rock, width: way.size * 10, height: way.size * 10,),
                 ),
               );
             }
             return Container(color: Colors.transparent);
           }).toList()) + <Widget>[
-            
             Container(
               width: width,
               height: height,
@@ -258,6 +261,8 @@ class Way {
   Node avg = Node();
   double size = 0.0;
 
+  String rock = 'images/rock.png';
+
   Way();
 
   Way.fromData(data, List<Node> nodes) {
@@ -267,8 +272,9 @@ class Way {
     this.avg.latitude = nodes.map((e) => e.latitude).reduce((a, b) => a + b) / nodes.length;
     
     this.size = nodes.map((e) => Offset(e.longitude, e.latitude)).map((e) => (e - Offset(this.avg.longitude, this.avg.latitude)).distanceSquared).reduce(max) * expansion * 500;
-    
-    print(this.size);
+    this.size = (min(this.size, 10));
+
+    this.rock = rockimagenames[rng.nextInt(rockimagenames.length)];
 
     this.color = Colors.transparent;
     if(data.containsKey('tags')) {
@@ -278,7 +284,7 @@ class Way {
           this.id = 'sidewalk';
         } else {
           this.color = Colors.grey.withOpacity(0.8);
-          var rng = new Random();
+          
           if(rng.nextInt(10) % 5 == 0) {
             DinoController.dinos.add({
               'currentNode': nodes.first,
@@ -335,12 +341,6 @@ class MapPainter extends CustomPainter {
           ui.PointMode.polygon,
           points, 
           Paint()..strokeWidth=6..color=way.color
-        );
-      } else if (way.id == 'land') {
-        canvas.drawPoints(
-          ui.PointMode.polygon,
-          points, 
-          Paint()..strokeWidth=2..color=Color.fromRGBO(50, 120, 80, 0.5)
         );
       }
     }
