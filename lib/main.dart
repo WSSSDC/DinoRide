@@ -163,7 +163,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             GestureDetector(
-              onTapDown: (v) {
+              onTapUp: (v) {
                 double lon = v.globalPosition.dx / expansion + currentLon;
                 double lat = v.globalPosition.dy / expansion + currentLat;
                 Way closestWay = ways.first;
@@ -177,6 +177,10 @@ class _MyHomePageState extends State<MyHomePage> {
                   }
                 }
                 print(closestWay.tags);
+                showDialog(context: context, builder: (_) => AlertDialog(
+                  title: Text('Hello!'),
+                  content: Text("You found a " + closestWay.id ?? closestWay.tags.toString()),
+                ));
               },
 
               onPanUpdate: (v) {
@@ -224,7 +228,7 @@ class Way {
       case 'building':
         return Colors.white;
       case 'road':
-        return Colors.grey;
+        return Colors.grey.withOpacity(0.8);
     }
     return Colors.transparent;
   }
@@ -267,7 +271,7 @@ class MapPainter extends CustomPainter {
         canvas.drawPoints(
           ui.PointMode.polygon,
           points, 
-          Paint()..strokeWidth=5..color=way.color
+          Paint()..strokeWidth=6..color=way.color
         );
       } else if (way.id == 'building') {
         canvas.drawPoints(
@@ -279,7 +283,7 @@ class MapPainter extends CustomPainter {
         canvas.drawPoints(
           ui.PointMode.polygon,
           points, 
-          Paint()..strokeWidth=2..color=Color.fromRGBO(50, 120, 80, 1)
+          Paint()..strokeWidth=2..color=Color.fromRGBO(50, 120, 80, 0.5)
         );
       }
     }
