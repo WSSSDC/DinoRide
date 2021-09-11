@@ -7,7 +7,7 @@ import 'package:prehistoric/dino-controller.dart';
 import 'package:prehistoric/location-controller.dart';
 import 'package:prehistoric/map-data.dart';
 import 'dart:ui' as ui;
-
+import 'dart:math';
 import 'package:prehistoric/navigate.dart';
 
 double zoomx = 0.004;
@@ -16,7 +16,7 @@ double currentLon = -122.032;
 double currentLat = 37.3317;
 double expansion = 150000;
 LocationData location;
-List<String> imagenames = ['dinolux-50.png', 'dino-50.png', 'dinox-50.png', 'dinocopter-50.png'];
+List<String> imagenames = ['dinolux-50.png', 'dino-50.png', 'dinox-50.png', 'dinocopter-50.png', 'caveman.png'];
 
 void main() {
   runApp(MyApp());
@@ -29,6 +29,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'UberMove'
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -51,7 +52,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     DinoController.stream;
-    _loadImage("images/dino-50.png");
     imagenames.forEach((e) => _loadImage("images/" + e));
     getLocation();
     super.initState();
@@ -163,16 +163,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 clipper: Clipper(way),
               );
             } else if (way.id == 'building') {
-              return ClipPath(
-                child: SizedBox.expand(
-                  child: Image(
-                    image: AssetImage('images/rocky.jpg'),
-                    repeat: ImageRepeat.repeat,
-                    alignment: FractionalOffset(0, currentLat.abs() * -500),
-                  ),
+              return Container(
+                child: Align(
+                  alignment: FractionalOffset(((way.avg.longitude - currentLon) * expansion) / width, ((way.avg.latitude - currentLat) * expansion) / height),
+                  child: Image.asset('images/rock.png', width: way.size * 10, height: way.size * 10,),
                 ),
-                clipBehavior: Clip.hardEdge,
-                clipper: Clipper(way),
               );
             }
             return Container(color: Colors.transparent);
@@ -182,7 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
               width: width,
               height: height,
               child: CustomPaint(
-                painter: MapPainter(ways, location),
+                painter: MapPainter(ways, location, _images.length >= 5 ? _images[4] : null),
               ),
             ),
             Container(
@@ -260,10 +255,20 @@ class Way {
 
   Color color = Colors.transparent;
 
+  Node avg = Node();
+  double size = 0.0;
+
   Way();
 
   Way.fromData(data, List<Node> nodes) {
     this.nodes = nodes;
+    
+    this.avg.longitude = nodes.map((e) => e.longitude).reduce((a, b) => a + b) / nodes.length;
+    this.avg.latitude = nodes.map((e) => e.latitude).reduce((a, b) => a + b) / nodes.length;
+    
+    this.size = nodes.map((e) => Offset(e.longitude, e.latitude)).map((e) => (e - Offset(this.avg.longitude, this.avg.latitude)).distanceSquared).reduce(max) * expansion * 500;
+    
+    print(this.size);
 
     this.color = Colors.transparent;
     if(data.containsKey('tags')) {
@@ -311,9 +316,10 @@ class Clipper extends CustomClipper<Path> {
 }
 
 class MapPainter extends CustomPainter {
-  MapPainter(this.ways, this.location);
+  MapPainter(this.ways, this.location, this.image);
   final List<Way> ways;
   final LocationData location;
+  final ui.Image image;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -341,16 +347,17 @@ class MapPainter extends CustomPainter {
 
     if(location != null) {
       Offset locationOffset = Offset((location.longitude - currentLon) * expansion, (location.latitude - currentLat) * expansion);
-      canvas.drawCircle(
-        locationOffset,
-        11,
-        Paint()..strokeWidth=3..color=Colors.white
-      );
-      canvas.drawCircle(
-        locationOffset, 
-        8,
-        Paint()..strokeWidth=3..color=Colors.blueAccent
-      );
+      // canvas.drawCircle(
+      //   locationOffset,
+      //   11,
+      //   Paint()..strokeWidth=3..color=Colors.white
+      // );
+      // canvas.drawCircle(
+      //   locationOffset, 
+      //   8,
+      //   Paint()..strokeWidth=3..color=Colors.blueAccent
+      // );
+      canvas.drawImage(image, locationOffset, Paint());
     }
   }
 

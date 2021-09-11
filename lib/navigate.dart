@@ -29,7 +29,8 @@ class _NavigateState extends State<Navigate> {
               Container(height: 20),
               NavigationCard(name: "Cave", selected: selectedLocation == 'Cave', selectLocation: select,),
               NavigationCard(name: "Hut", selected: selectedLocation == 'Hut', selectLocation: select),
-              NavigationCard(name: "Market", selected: selectedLocation == 'Market', selectLocation: select),
+              NavigationCard(name: "River", selected: selectedLocation == 'River', selectLocation: select),
+              NavigationCard(name: "Nearest Rock", selected: selectedLocation == 'Nearest Rock', selectLocation: select),
               Expanded(child: Container()),
               Container(
                 height: 50,
@@ -78,7 +79,7 @@ class NavigationCard extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.only(top: 5, bottom: 5),
         padding: EdgeInsets.only(top: 10, bottom: 10),
-        child: Center(child: Text(name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: selected ? Colors.white : Colors.black),)),
+        child: Center(child: Text(name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: selected ? Colors.white : Colors.black,),)),
         decoration: BoxDecoration(
           color: selected ? Colors.black : Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(12)),
