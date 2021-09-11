@@ -1,4 +1,4 @@
-# Themis 
+# UG
 
 ## 💡 Inspiration
 
