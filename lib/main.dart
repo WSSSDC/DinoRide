@@ -167,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
               return ClipPath(
                 child: SizedBox.expand(
                   child: Image(
-                    image: AssetImage('images/wood.png'),
+                    image: AssetImage('images/rocky.jpg'),
                     repeat: ImageRepeat.repeat,
                     alignment: FractionalOffset(0, currentLat.abs() * -500),
                   ),
@@ -326,12 +326,6 @@ class MapPainter extends CustomPainter {
           ui.PointMode.polygon,
           points, 
           Paint()..strokeWidth=6..color=way.color
-        );
-      } else if (way.id == 'building') {
-        canvas.drawPoints(
-          ui.PointMode.polygon,
-          points, 
-          Paint()..strokeWidth=2..color=Colors.brown
         );
       } else if (way.id == 'land') {
         canvas.drawPoints(
