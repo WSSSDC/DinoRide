@@ -136,26 +136,14 @@ class MapPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // canvas.translate(0, 0);
-    canvas.drawColor(Colors.transparent, BlendMode.src);
+    canvas.drawColor(Colors.brown, BlendMode.src);
     // canvas.drawImage(image, Offset.zero, Paint());
     
     //canvas.rotate(-1.57079633);
 
     for (Way way in ways) {
       List<Offset> points = List<Offset>.from(way.nodes.map((node) => Offset((node.longitude - currentLon) * 250000, (node.latitude - currentLat) * 250000)).toList());
-      
-      final ui.ParagraphBuilder paragraphBuilder = ui.ParagraphBuilder(
-          ui.ParagraphStyle(
-            fontSize: 13,
-            // fontFamily: style.fontFamily, 
-            // fontStyle:  style.fontStyle,
-            // fontWeight: style.fontWeight,
-            textAlign: TextAlign.justify,
-          )
-        )..addText(way.id);
-        final ui.Paragraph paragraph = paragraphBuilder.build(); 
-      
-      canvas.drawParagraph(paragraph, points.reduce((a,b) => a + (b / points.length.toDouble())));
+  
       if (!way.filled) {
         canvas.drawPoints(
           ui.PointMode.polygon,
@@ -204,7 +192,7 @@ class Way {
       case 'sidewalk':
         return Colors.transparent;
       case 'building':
-        return Colors.black;
+        return Colors.white;
       case 'road':
         return Colors.transparent;
     }
