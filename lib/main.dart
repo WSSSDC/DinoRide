@@ -9,6 +9,8 @@ import 'package:prehistoric/location-controller.dart';
 import 'package:prehistoric/map-data.dart';
 import 'dart:ui' as ui;
 
+import 'package:prehistoric/navigate.dart';
+
 double zoomx = 0.004;
 double zoomy = 0.004;
 double currentLon = -122.032;
@@ -56,13 +58,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _loadImage() async {
     ByteData bd = await rootBundle.load("images/dino-50.png");
-
     final Uint8List bytes = Uint8List.view(bd.buffer);
-
     final ui.Codec codec = await ui.instantiateImageCodec(bytes);
-
     final ui.Image image = (await codec.getNextFrame()).image;
-
     setState(() => _image = image);
   }
 
@@ -70,8 +68,8 @@ class _MyHomePageState extends State<MyHomePage> {
     print("Getting Location...");
     location = await LocationController.getLocation();
     print("Location Received");
-    currentLon = location.longitude;
-    currentLat = location.latitude;
+    currentLon = location.longitude + (-250/expansion);
+    currentLat = location.latitude + (-400/expansion);
     print("Getting Map Data...");
     Map<String, dynamic> map = Map<String, dynamic>.from(await OSM.getData(left:location.longitude - zoomx, right:location.longitude + zoomx, bottom:location.latitude - zoomy, top:location.latitude + zoomy));
     print("Map Data Received");
@@ -227,7 +225,14 @@ class _MyHomePageState extends State<MyHomePage> {
             )
           ],
         ),
-      )
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.navigation),
+        backgroundColor: Colors.black,
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (_) => Navigate()));
+        },
+      ),
     );
   }
 }
