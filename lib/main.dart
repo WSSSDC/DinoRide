@@ -1,8 +1,10 @@
-import 'dart:async';
+import 'dart:math';
 import 'dart:typed_data';
-import 'package:flutter/services.dart' show rootBundle;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:location/location.dart';
+import 'package:prehistoric/dino-controller.dart';
 import 'package:prehistoric/location-controller.dart';
 import 'package:prehistoric/map-data.dart';
 import 'dart:ui' as ui;
@@ -42,21 +44,40 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   List<Way> ways = [];
-  ui.Image image;
+  ui.Image _image;
 
   @override
   void initState() {
+    DinoController.stream;
+    _loadImage();
     getLocation();
     super.initState();
   }
 
+  _loadImage() async {
+    ByteData bd = await rootBundle.load("images/dino-50.png");
+
+    final Uint8List bytes = Uint8List.view(bd.buffer);
+
+    final ui.Codec codec = await ui.instantiateImageCodec(bytes);
+
+    final ui.Image image = (await codec.getNextFrame()).image;
+
+    setState(() => _image = image);
+  }
+
   getLocation() async {
+    print("Getting Location...");
     location = await LocationController.getLocation();
-    currentLon = location.longitude - zoomx;
-    currentLat = location.latitude - zoomy;
+    print("Location Received");
+    currentLon = location.longitude;
+    currentLat = location.latitude;
+    print("Getting Map Data...");
     Map<String, dynamic> map = Map<String, dynamic>.from(await OSM.getData(left:location.longitude - zoomx, right:location.longitude + zoomx, bottom:location.latitude - zoomy, top:location.latitude + zoomy));
+    print("Map Data Received");
     var waysData = map['elements'].where((e) => e['type']=='way');
     // waysData.toList().forEach((e) => print(e['tags']));
+    print("Generating Map...");
     ways = List<Way>.from(waysData.map((e) {
       List<Node> nodes = [];
       for (int id in e['nodes']) {
@@ -69,11 +90,13 @@ class _MyHomePageState extends State<MyHomePage> {
           );
         }
       }
-      return Way()..nodes = nodes..id=idFromWayData(e)..closed=isWayClosed(e)..tags=e['tags'];
+      return Way.fromData(e, nodes);
     }).toList());
+
 
     ways.sort((a,b) => layerFromID(a.id).compareTo(layerFromID(b.id)));
 
+    print("Generated Map");
     setState(() => ways);
   }
 
@@ -125,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 image: AssetImage('images/road.jpg'),
                 fit: BoxFit.fill,
                 repeat: ImageRepeat.repeat,
-                alignment: FractionalOffset(currentLon.abs() * -250, currentLat.abs() * -250),
+                alignment: FractionalOffset(currentLon.abs() * -250, currentLat.abs() * -expansion * 0.01),
               ),
             )] + List<Widget>.from(ways.map((way) {
             if (way.id == 'land') {
@@ -134,7 +157,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Image(
                     image: AssetImage('images/grass.jpg'),
                     repeat: ImageRepeat.repeat,
-                    alignment: FractionalOffset(currentLon.abs() * -250, currentLat.abs() * -250),
+                    alignment: FractionalOffset(currentLon.abs() * -250, currentLat.abs() * -expansion * 0.0015),
                   ),
                 ),
                 clipBehavior: Clip.hardEdge,
@@ -155,6 +178,18 @@ class _MyHomePageState extends State<MyHomePage> {
             }
             return Container(color: Colors.transparent);
           }).toList()) + <Widget>[
+            StreamBuilder(
+              stream: DinoController.stream,
+              builder: (context, currentDinos) {
+                return Container(
+                  width: width,
+                  height: height,
+                  child: CustomPaint(
+                    painter: DinoPainter(currentDinos.data ?? [], _image),
+                  ),
+                );
+              }
+            ),
             Container(
               width: width,
               height: height,
@@ -176,11 +211,11 @@ class _MyHomePageState extends State<MyHomePage> {
                     }
                   }
                 }
-                print(closestWay.tags);
-                showDialog(context: context, builder: (_) => AlertDialog(
-                  title: Text('Hello!'),
-                  content: Text("You found a " + closestWay.id ?? closestWay.tags.toString()),
-                ));
+                // print(closestWay.tags);
+                // showDialog(context: context, builder: (_) => AlertDialog(
+                //   title: Text('Hello!'),
+                //   content: Text("You found a " + closestWay.id ?? closestWay.tags.toString()),
+                // ));
               },
 
               onPanUpdate: (v) {
@@ -221,16 +256,36 @@ class Way {
     return false;
   }
 
-  Color get color {
-    switch(id) {
-      case 'sidewalk':
-        return Colors.transparent;
-      case 'building':
-        return Colors.white;
-      case 'road':
-        return Colors.grey.withOpacity(0.8);
+  Color color = Colors.transparent;
+
+  Way();
+
+  Way.fromData(data, List<Node> nodes) {
+    this.nodes = nodes;
+
+    this.color = Colors.transparent;
+    if(data.containsKey('tags')) {
+      if (data['tags'].containsKey('highway')) {
+        this.id = 'road';
+        if(data['tags']['highway'] == 'footway') {
+          this.id = 'sidewalk';
+        } else {
+          this.color = Colors.grey.withOpacity(0.8);
+          var rng = new Random();
+          if(rng.nextInt(10) % 5 == 0) {
+            DinoController.dinos.add({
+              'currentNode': nodes.first,
+              'nodes': nodes,
+              'nextNode': nodes[1] ?? nodes.first
+            });
+          }
+        }
+      } else if (data['tags'].containsKey('building')) {
+        this.id = 'building';
+      } else if (data['tags'].containsKey('landuse')) {
+        this.id = 'land';
+      }
     }
-    return Colors.transparent;
   }
 }
 
@@ -266,7 +321,6 @@ class MapPainter extends CustomPainter {
 
     for (Way way in ways) {
       List<Offset> points = List<Offset>.from(way.nodes.map((node) => Offset((node.longitude - currentLon) * expansion, (node.latitude - currentLat) * expansion)).toList());
-      
       if (!way.filled) {
         canvas.drawPoints(
           ui.PointMode.polygon,
@@ -304,5 +358,27 @@ class MapPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter oldDelegate) => true;
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+}
+
+class DinoPainter extends CustomPainter {
+  DinoPainter(this.dinos, this.image);
+  final List<Map<String, dynamic>> dinos;
+  final ui.Image image;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+
+    var dinoPoints = (dinos ?? []).map((entry){
+      Node node = entry['currentNode'];
+      return Offset((node.longitude - currentLon) * expansion - 25, (node.latitude - currentLat) * expansion - 25);
+    }).toList();
+
+    dinoPoints.forEach((point) {
+      canvas.drawImage(image, point, Paint());
+    });
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
