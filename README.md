@@ -21,7 +21,7 @@ DinoRide allows you took book a trip and have dinosaur deliver you to your desir
 ## ✅ Accomplishments that we're proud of
 
 - Being able to completley change the look of Google Maps
-- 
+- Adding some basic loading animations
 
 ## 📖 What we learned
 
