@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'arrived.dart';
 
 class Waiting extends StatefulWidget {
-  const Waiting({ Key key, this.dinoName, this.locationName}) : super(key: key);
+  const Waiting({Key key, this.dinoName, this.locationName}) : super(key: key);
   final String locationName;
   final String dinoName;
 
@@ -11,7 +11,6 @@ class Waiting extends StatefulWidget {
 }
 
 class _WaitingState extends State<Waiting> {
-
   @override
   void initState() {
     startCountdown();
@@ -32,20 +31,26 @@ class _WaitingState extends State<Waiting> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Your " + (this.widget.dinoName ?? "dino") + " is on its way", style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+              Text(
+                  "Your " +
+                      (this.widget.dinoName ?? "dino") +
+                      " is on its way...",
+                  style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
               Expanded(
-                child: Center(
-                  child: Container(
-                    decoration: BoxDecoration(
+                  child: Center(
+                child: Container(
+                  decoration: BoxDecoration(
                       borderRadius: BorderRadius.all(Radius.circular(100)),
                       image: DecorationImage(
-                        image: AssetImage('images/loading.gif')
-                      )
-                    ),
-                  ),
-                )
-              ),
-              Text("Your " + (this.widget.dinoName ?? "dino") + " is on its way", style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold, color: Colors.transparent)),
+                          image: AssetImage('images/loading.gif'))),
+                ),
+              )),
+              Text(
+                  "Your " + (this.widget.dinoName ?? "dino") + " is on its way",
+                  style: TextStyle(
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.transparent)),
             ],
           ),
         ),
