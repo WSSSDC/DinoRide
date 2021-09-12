@@ -41,10 +41,10 @@ class _NavigateChooseState extends State<NavigateChoose> {
             children: [
               Text("Navigate To " + this.widget.name, style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
               Container(height: 20),
-              NavigationCard(name: "DinoX", image: 'images/dinox.png', desc: 'Affordable rides whenever you need them', selected: selectedDino == 'DinoX', selectDino: select),
-              NavigationCard(name: "Dino Green", image: 'images/dino.png', desc: 'Help preserve the earth with a herbivore', selected: selectedDino == 'Dino Green', selectDino: select),
-              NavigationCard(name: "Dino Lux", image: 'images/dinolux2.png', desc: 'Ride on top of our most comfortable dinos and have a pleasant experience', selected: selectedDino == 'Dino Lux', selectDino: select),
-              NavigationCard(name: "Dino Copter", image: 'images/dinocopter.png', desc: 'Avoid traffic.', selected: selectedDino == 'Dino Copter', selectDino: select),
+              NavigationCard(name: "DinoX", image: 'images/dinox.png', desc: 'Affordable rides whenever you need them.', selected: selectedDino == 'DinoX', selectDino: select),
+              NavigationCard(name: "Dino Green", image: 'images/dino.png', desc: 'Help preserve the earth with a herbivore.', selected: selectedDino == 'Dino Green', selectDino: select),
+              NavigationCard(name: "Dino Lux", image: 'images/dinolux2.png', desc: 'Ride on top of our most comfortable dinos and have a pleasant experience.', selected: selectedDino == 'Dino Lux', selectDino: select),
+              NavigationCard(name: "Dino Copter", image: 'images/dinocopter.png', desc: 'Avoid traffic by soaring across the sky on a majestic Pterodactyl.', selected: selectedDino == 'Dino Copter', selectDino: select),
               Expanded(child: Container()),
                 Container(
                   height: 50,
