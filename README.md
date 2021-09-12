@@ -31,11 +31,9 @@ DinoRide allows you to book a trip and have dinosaurs deliver you to your desire
 - Add appropriate dinosaurs by location to improve believability
 
 ## Gallery
-![1](https://user-images.githubusercontent.com/47152801/132972157-a768574c-ef3d-4f31-8fcf-b3fb4f3e7a7e.png)
-![2](https://user-images.githubusercontent.com/47152801/132972160-b9a88d70-f8e4-45ee-b8c4-29037a500dcf.png)
-![3](https://user-images.githubusercontent.com/47152801/132972162-8dd7d846-fae6-49df-ab6e-9547b004e7dc.png)
-![4](https://user-images.githubusercontent.com/47152801/132972165-bdf3f96e-2f67-4216-99b1-1cdfde0a2ced.png)
-![5](https://user-images.githubusercontent.com/47152801/132972166-b65dbb16-7ec6-41f9-b5c7-c697bd56d37e.png)
+![image1](https://user-images.githubusercontent.com/47152801/132972247-f0589521-0c5c-4152-8cea-37af3523be73.png)
+![screenshots](https://user-images.githubusercontent.com/47152801/132972249-4e765caa-a48f-404a-bc39-4b2cca8e8e91.png)
+
 
 ## 🙇‍♂️ Acknowledgements
 We would like to thank PreHackstoric for the opportunity to come up with and create DinoRide, we would also like to thank Open Street Maps for their API.
