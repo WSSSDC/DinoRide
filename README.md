@@ -27,8 +27,8 @@ DinoRide allows you to book a trip and have dinosaurs deliver you to your desire
 
 ## 🤔 What's next for DinoRide
 - Improve the visuals, add a user account system
-- Implement a rating systems for dinosaurs
-- Add appropriate dinosaurs by location to improve believablility
+- Implement a rating system for individual dinosaurs
+- Add appropriate dinosaurs by location to improve believability
 
 ## Gallery
 
