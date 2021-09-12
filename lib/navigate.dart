@@ -27,7 +27,8 @@ class _NavigateState extends State<Navigate> {
             children: [
               Text("Navigate", style: TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
               Container(height: 20),
-              NavigationCard(name: "Cave", selected: selectedLocation == 'Cave', selectLocation: select,),
+              NavigationCard(name: "Search", selected: selectedLocation == 'Search', selectLocation: select),
+              NavigationCard(name: "Cave", selected: selectedLocation == 'Cave', selectLocation: select),
               NavigationCard(name: "Hut", selected: selectedLocation == 'Hut', selectLocation: select),
               NavigationCard(name: "River", selected: selectedLocation == 'River', selectLocation: select),
               NavigationCard(name: "Nearest Rock", selected: selectedLocation == 'Nearest Rock', selectLocation: select),
@@ -78,8 +79,18 @@ class NavigationCard extends StatelessWidget {
       },
       child: Container(
         margin: EdgeInsets.only(top: 5, bottom: 5),
-        padding: EdgeInsets.only(top: 10, bottom: 10),
-        child: Center(child: Text(name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: selected ? Colors.white : Colors.black,),)),
+        padding: EdgeInsets.only(top: 10, bottom: 10, left: 15, right: 15),
+        child: Center(
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(name, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: selected ? Colors.white : Colors.black)),
+            ] + (name == "Search" ? [
+              Expanded(child: Container()),
+              Icon(Icons.search)
+            ] : []),
+          )
+        ),
         decoration: BoxDecoration(
           color: selected ? Colors.black : Colors.white,
           borderRadius: BorderRadius.all(Radius.circular(12)),

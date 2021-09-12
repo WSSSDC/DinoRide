@@ -7,7 +7,6 @@ import 'package:prehistoric/dino-controller.dart';
 import 'package:prehistoric/location-controller.dart';
 import 'package:prehistoric/map-data.dart';
 import 'dart:ui' as ui;
-import 'dart:math';
 import 'package:prehistoric/navigate.dart';
 
 double zoomx = 0.004;
@@ -31,8 +30,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       theme: ThemeData(
         primarySwatch: Colors.blue,
-        fontFamily: 'UberMove'
+        fontFamily: 'UberMove',
       ),
+      debugShowCheckedModeBanner: false,
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -191,26 +191,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             GestureDetector(
-              onTapUp: (v) {
-                double lon = v.globalPosition.dx / expansion + currentLon;
-                double lat = v.globalPosition.dy / expansion + currentLat;
-                Way closestWay = ways.first;
-                Node closestNode = ways.first.nodes.first;
-                for (Way way in ways) {
-                  for(Node node in way.nodes) {
-                    if (distance(node.longitude, lon, node.latitude, lat) < distance(closestNode.longitude, lon, closestNode.latitude, lat)) {
-                      closestNode = node;
-                      closestWay = way;
-                    }
-                  }
-                }
-                // print(closestWay.tags);
-                // showDialog(context: context, builder: (_) => AlertDialog(
-                //   title: Text('Hello!'),
-                //   content: Text("You found a " + closestWay.id ?? closestWay.tags.toString()),
-                // ));
-              },
-
               onPanUpdate: (v) {
                 setState(() {
                   currentLon -= v.delta.dx / 250000;
@@ -347,17 +327,17 @@ class MapPainter extends CustomPainter {
 
     if(location != null) {
       Offset locationOffset = Offset((location.longitude - currentLon) * expansion, (location.latitude - currentLat) * expansion);
-      // canvas.drawCircle(
-      //   locationOffset,
-      //   11,
-      //   Paint()..strokeWidth=3..color=Colors.white
-      // );
-      // canvas.drawCircle(
-      //   locationOffset, 
-      //   8,
-      //   Paint()..strokeWidth=3..color=Colors.blueAccent
-      // );
-      canvas.drawImage(image, locationOffset, Paint());
+      canvas.drawCircle(
+        locationOffset,
+        11,
+        Paint()..strokeWidth=3..color=Colors.white
+      );
+      canvas.drawCircle(
+        locationOffset, 
+        8,
+        Paint()..strokeWidth=3..color=Colors.blueAccent
+      );
+      // canvas.drawImage(image, locationOffset, Paint());
     }
   }
 

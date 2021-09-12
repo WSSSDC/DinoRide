@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'arrived.dart';
 
 class Waiting extends StatefulWidget {
   const Waiting({ Key key, this.dinoName, this.locationName}) : super(key: key);
@@ -10,6 +11,18 @@ class Waiting extends StatefulWidget {
 }
 
 class _WaitingState extends State<Waiting> {
+
+  @override
+  void initState() {
+    startCountdown();
+    super.initState();
+  }
+
+  startCountdown() async {
+    await Future.delayed(Duration(seconds: 5));
+    Navigator.push(context, MaterialPageRoute(builder: (_) => Arrived()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

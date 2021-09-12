@@ -23,9 +23,9 @@ class _NavigateChooseState extends State<NavigateChoose> {
       case 'Dino Green':
         return '8';
       case 'Dino Lux':
-        return '15';
-      case 'Dino Copter':
         return '69';
+      case 'Dino Copter':
+        return '420';
     }
     return '5';
   }
